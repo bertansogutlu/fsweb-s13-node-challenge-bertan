@@ -13,15 +13,44 @@ router.get('/',async (req,res,next)=>{
     }
 });
 
-router.get('/:id',async (req,res,next)=>{
+router.get('/:id', middleware.actionCheckById, async (req,res,next)=>{
     try {
-        const action = await actionModel.get(req.params.id);
-        if(action){
-            res.status(200).json(action);
+        res.status(200).json(req.actionPayload)
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.post('/', async (req,res,next)=>{
+    try {
+        if(!req.body.description || !req.body.notes){
+            res.status(400).json({message:'eksik bilgiler var'})
         } else {
-            res.status(404).json({message:'aksiyon bulunamadi'});
+            const newAction = await actionModel.insert(req.body);
+            res.status(200).json(newAction)
         }
-        
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.put('/:id', middleware.actionCheckById, async (req,res,next)=>{
+    try {
+        if(!req.body.description || !req.body.notes){
+            res.status(400).json({message:'eksik bilgiler var'})
+        } else {
+            const updatedAction = await actionModel.update(req.params.id, req.body);
+            res.status(200).json(updatedAction)
+        }
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.delete('/:id', middleware.actionCheckById, async (req,res,next)=>{
+    try {
+        await actionModel.remove(req.params.id);
+        res.status(200).json(req.payload);
     } catch (error) {
         next(error);
     }
