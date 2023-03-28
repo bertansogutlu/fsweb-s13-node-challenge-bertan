@@ -17,11 +17,9 @@ async function checkProjectId(req,res,next) {
 
 async function checkPayload(req,res,next) {
     try {
-        let {name, description} = req.body;
-        if(!name || !description) {
+        if(!req.body.name || !req.body.description || req.body.completed === undefined) {
             res.status(400).json({message:'eksik alanlari doldurunuz'});
         } else {
-            req.payloadProject={name:name,description:description};
             next();
         }
     } catch (error) {

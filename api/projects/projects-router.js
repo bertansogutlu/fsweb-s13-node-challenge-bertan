@@ -23,19 +23,19 @@ router.get('/:id',middleware.checkProjectId, async (req,res,next)=>{
 
 router.post('/',middleware.checkPayload, async (req,res,next)=>{
     try {
-        let insertedProject = await projectModel.insert(req.payloadProject);
+        let insertedProject = await projectModel.insert(req.body);
         res.status(200).json(insertedProject);
     } catch (error) {
         next(error);
     }
 });
 
-router.put('/:id',middleware.checkProjectId,middleware.checkPayload, async (req,res,next)=>{
+router.put('/:id',middleware.checkPayload,middleware.checkProjectId, async (req,res,next)=>{
     try {
-        let upatedProject = await projectModel.update(req.params.id,req.payloadProject);
-        res.status(200).json(upatedProject);
+            let upatedProject = await projectModel.update(req.params.id,req.body);
+            res.status(200).json(upatedProject);
     } catch (error) {
-        next(error);
+        res.status(404).json({message: 'id bulunamadi'});
     }
 });
 
